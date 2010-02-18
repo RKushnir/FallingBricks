@@ -1,0 +1,73 @@
+sampler tex: register(s0);  
+
+float4 ps_main(float4 color : COLOR, float2 texCoord : TEXCOORD0) : COLOR
+{
+// 	float2 samples[12] =
+// 	{
+// 		-0.326212, -0.405805,  
+// 		-0.840144, -0.073580,  
+// 		-0.695914, 0.457137,  
+// 		-0.203345, 0.620716,  
+// 		0.962340, -0.194983,  
+// 		0.473434, -0.480026,  
+// 		0.519456, 0.767022,  
+// 		0.185461, -0.893124,  
+// 		0.507431, 0.064425,  
+// 		0.896420, 0.412458,  
+// 		-0.321940, -0.932615,  
+// 		-0.791559, -0.597705,  
+// 	};  
+// 
+// 	float4 sum = tex2D(tex, texCoord);  
+// 	for (int i = 0; i < 12; i++)
+// 	{
+// 		sum += tex2D(tex, texCoord + 0.025 * samples[i]);
+// 	}
+// 
+// 	float4 result = sum / 13;
+// 	result[3] = color[3];
+
+	float2 samples[8] =
+	{
+		-0.001, -0.001,
+		+0.000, -0.001,
+		+0.001, -0.001,
+		-0.001, +0.000,
+		+0.001, +0.000,
+		-0.001, +0.001,
+		+0.000, +0.001,
+		+0.001, +0.001,
+	};  
+
+	float4 sum = tex2D(tex, texCoord);  
+	for (int i = 0; i < 8; i++)
+	{
+		sum += tex2D(tex, texCoord + 2 * samples[i]);
+		sum += tex2D(tex, texCoord + 4 * samples[i]);
+		sum += tex2D(tex, texCoord + 8 * samples[i]);
+	}
+
+	float4 result = sum / 25;
+	result.r = 0.5 * result.r + 0.5;
+	result.g = 0.5 * result.g + 0.5;
+	result.b = 0.5 * result.b + 0.5;		
+	result[3] = color[3];
+
+
+// 	float4 result = tex2D(tex, texCoord.xy);
+// 	result += tex2D( tex, texCoord.xy+0.002);
+// 	result += tex2D( tex, texCoord.xy+0.004);
+// 	result += tex2D( tex, texCoord.xy+0.006);
+// 	result *= 0.25;
+// 	result[3] = color[3];
+
+	return result;
+}
+
+//sampler tex : register(s0);
+
+//float4 ps_main(float4 color : COLOR, float2 texCoord : TEXCOORD0) : COLOR
+//{
+//	color[1] = 2.0f;
+//	return tex2D(tex, texCoord) * color;
+//}
